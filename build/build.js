@@ -1,5 +1,5 @@
 'use strict'
-require('./check-versions')()
+require('./check-versions')() // 检查版本
 
 process.env.NODE_ENV = 'production'
 
@@ -8,12 +8,13 @@ const rm = require('rimraf')
 const path = require('path')
 const chalk = require('chalk')
 const webpack = require('webpack')
-const config = require('../config')
+const config = require('../config') // 默认加载该文件夹下的名为index的文件
 const webpackConfig = require('./webpack.prod.conf')
 
 const spinner = ora('building for production...')
 spinner.start()
 
+// rm删除上次打包留下的文件
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
   if (err) throw err
   webpack(webpackConfig, (err, stats) => {

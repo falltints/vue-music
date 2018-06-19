@@ -1,6 +1,8 @@
 'use strict'
+// 处理各种静态资源的loader（css, style, less, sass, stylus）
 const path = require('path')
 const config = require('../config')
+// 用来将css提取到单独的css文件
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('../package.json')
 
@@ -36,6 +38,7 @@ exports.cssLoaders = function (options) {
     if (loader) {
       loaders.push({
         loader: loader + '-loader',
+        // Object.assign是es6的方法，主要用来合并对象的，浅拷贝
         options: Object.assign({}, loaderOptions, {
           sourceMap: options.sourceMap
         })
@@ -44,6 +47,7 @@ exports.cssLoaders = function (options) {
 
     // Extract CSS when that option is specified
     // (which is the case during production build)
+    // extract是自定义的属性，主要作用就是当配置为true就把文件单独提取，false表示不单独提取
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,

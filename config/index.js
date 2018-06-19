@@ -1,3 +1,4 @@
+// 此配置文件是用来定义开发环境和生产环境中所需要的参数
 'use strict'
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
@@ -10,7 +11,16 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    // 代理表，用来建一个虚拟api服务器用来代理本机的请求，只能用于开发模式
+    proxyTable: {
+      '/api': {
+        target: 'http://localhost:8080',
+        pathRewrite: {
+          '^/api': '/static/mock'
+        }
+        // changeOrigin: true, -> 指示是否跨域
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
@@ -64,6 +74,7 @@ module.exports = {
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
+    // 文件压缩
     productionGzip: false,
     productionGzipExtensions: ['js', 'css'],
 
@@ -71,6 +82,7 @@ module.exports = {
     // View the bundle analyzer report after build finishes:
     // `npm run build --report`
     // Set to `true` or `false` to always turn it on or off
+    // 编译完成后的report
     bundleAnalyzerReport: process.env.npm_config_report
   }
 }

@@ -1,8 +1,9 @@
 'use strict'
-const chalk = require('chalk')
-const semver = require('semver')
+// 检查npm, node版本
+const chalk = require('chalk') // 控制shell不同内容文字的颜色
+const semver = require('semver') // 用来对特定的版本号做判断的
 const packageConfig = require('../package.json')
-const shell = require('shelljs')
+const shell = require('shelljs') // 用来执行Unix系统命令
 
 function exec (cmd) {
   return require('child_process').execSync(cmd).toString().trim()
@@ -12,7 +13,7 @@ const versionRequirements = [
   {
     name: 'node',
     currentVersion: semver.clean(process.version),
-    versionRequirement: packageConfig.engines.node
+    versionRequirement: packageConfig.engines.node // ">= 6.0.0"
   }
 ]
 
@@ -20,7 +21,7 @@ if (shell.which('npm')) {
   versionRequirements.push({
     name: 'npm',
     currentVersion: exec('npm --version'),
-    versionRequirement: packageConfig.engines.npm
+    versionRequirement: packageConfig.engines.npm // ">= 3.0.0"
   })
 }
 
