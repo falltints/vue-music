@@ -10,7 +10,7 @@
 
 <script type="text/ecmascript-6">
 export default {
-
+  name: 'MHeader'
 }
 </script>
 
@@ -26,7 +26,7 @@ export default {
   font-size: 0 // 消除inline-block之间的间隙
   .icon
     display: inline-block
-    vertical-align: top
+    /*vertical-align: top*/
     margin-top: 6px
     width: 30px
     height: 32px
@@ -35,7 +35,8 @@ export default {
     background-size: 30px 32px
   .text
     display: inline-block
-    vertical-align: top
+    vertical-align: top // 把元素的顶端与行中最高元素的顶端对齐
+                        // 默认是baseline：元素放置在父元素的基线上。
     line-height: 44px
     font-size: $font-size-large
   .mine
