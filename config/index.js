@@ -7,19 +7,18 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     // 代理表，用来建一个虚拟api服务器用来代理本机的请求，只能用于开发模式
     proxyTable: {
-      '/api': {
-        target: 'http://localhost:8080',
+      /*'/getDiscList': {
+        target: 'https://c.y.qq.com',
         pathRewrite: {
-          '^/api': '/static/mock'
-        }
-        // changeOrigin: true, -> 指示是否跨域
-      }
+          '^/getDiscList': '/splcloud/fcgi-bin/'
+        },
+        changeOrigin: true // -> 指示是否跨域
+      }*/
     },
 
     // Various Dev Server settings

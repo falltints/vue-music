@@ -42,6 +42,7 @@ export default {
   },
   methods: {
     _setSliderWidth (isResize) {
+      // this.children.length的值是变化的，slider初始化之前为5，之后为5
       this.children = this.$refs.sliderGroup.children
 
       let width = 0
@@ -102,12 +103,17 @@ export default {
       }
     }, 20)
 
-    if (this.slider) {
-      return
-    }
     window.addEventListener('resize', () => {
+      if (this.slider) {
+        return
+      }
+
       this._setSliderWidth(true)
+      this.slider.refresh()
     })
+  },
+  destroyed () { // 切换路由的时候
+    clearTimeout(this.timer)
   }
 }
 </script>
