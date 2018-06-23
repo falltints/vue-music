@@ -37,7 +37,8 @@ export default {
     return {
       dots: [],
       currentIndex: 0,
-      slider: null
+      slider: null,
+      updateNumber: false
     }
   },
   methods: {
@@ -92,8 +93,8 @@ export default {
       }, this.interval)
     }
   },
-  mounted () {
-    setTimeout(() => {
+  updated () {
+    if (!this.updateNumber) {
       this._setSliderWidth(false)
       this._initDots()
       this._initSlider()
@@ -101,16 +102,18 @@ export default {
       if (this.autoPlay) {
         this._play()
       }
-    }, 20)
 
-    window.addEventListener('resize', () => {
-      if (this.slider) {
-        return
-      }
+      window.addEventListener('resize', () => {
+        if (!this.slider) {
+          return
+        }
 
-      this._setSliderWidth(true)
-      this.slider.refresh()
-    })
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      })
+
+      this.updateNumber = true
+    }
   },
   destroyed () { // 切换路由的时候
     clearTimeout(this.timer)
@@ -122,9 +125,10 @@ export default {
 @import "~common/stylus/variable"
 
 .slider
-  min-height: 1px
+  width: 100%
   position: relative
   .slider-group
+    width: 100%
     overflow: hidden
     white-space: nowrap
     .slider-item

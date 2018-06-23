@@ -2,11 +2,12 @@
   <div class="recommend" ref="recommend">
     <scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
-        <div v-if="recommends.length" class="slider-wrapper" ref="sliderWrapper">
+        <div class="slider-wrapper" ref="sliderWrapper">
           <slider>
             <div v-for="item of recommends" :key="item.id">
               <a :href="item.linkUrl">
                 <img class="needsclick" :src="item.picUrl" @load="loadImage">
+                <!--添加needsclick类是为了消除fastClick的默认阻止点击行为-->
               </a>
             </div>
           </slider>
@@ -16,7 +17,7 @@
           <ul>
             <li v-for="(item, index) of discList" class="item" :key="index"><!--@click="selectItem(item)"-->
               <div class="icon">
-                <img width="60px" height="60px" :src="item.imgurl"><!-- v-lazy="item.imgurl"-->
+                <img width="60px" height="60px" v-lazy="item.imgurl">
               </div>
               <div class="text">
                 <h2 class="name" v-html="item.creator.name"></h2>
@@ -25,11 +26,11 @@
             </li>
           </ul>
         </div>
-        <!--<div class="loading-container" v-show="!discList.length">
-          <loading></loading>
-        </div>-->
       </div>
     </scroll>
+    <div class="loading-container" v-show="!discList.length">
+      <loading></loading>
+    </div>
     <!--<router-view></router-view>-->
   </div>
 </template>
@@ -39,11 +40,14 @@ import {getRecommendation, getDiscList} from 'api/recommend'
 import {ERR_OK} from 'api/config'
 import Slider from 'base/slider/Slider'
 import Scroll from 'base/scroll/Scroll'
+import Loading from 'base/loading/Loading'
+
 export default {
   name: 'Recommend',
   components: {
     Slider,
-    Scroll
+    Scroll,
+    Loading
   },
   data () {
     return {
@@ -78,6 +82,9 @@ export default {
   created () {
     this._getRecommendation()
     this._getDiscList()
+    // 生命周期：
+    // recommend created => slider mounted => recommend mounted => 获取recommends数据，重新渲染虚拟DOM
+    // => slider updated => recommend updated
   }
 }
 </script>
@@ -96,6 +103,9 @@ export default {
     .slider-wrapper
       position: relative
       width: 100%
+      height: 0
+      padding-bottom: 40%
+      background-color: #ccc
       overflow: hidden
     .recommend-list
       .list-title
@@ -128,9 +138,10 @@ export default {
             color: $color-text
           .desc
             color: $color-text-d
-    /*.loading-container
-      position: absolute
-      width: 100%
-      top: 50%
-      transform: translateY(-50%)*/
+  .loading-container
+    position: absolute
+    width: 100%
+    top: 50%
+    transform: translateY(-50%) // 自身高度的50%
+    z-index: 2
 </style>

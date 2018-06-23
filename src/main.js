@@ -10,7 +10,7 @@ import 'common/stylus/index.styl'
 fastClick.attach(document.body)
 
 Vue.use(VueLazyLoad, {
-  loading: require('common/image/default.png')
+  loading: require('common/image/default.png') // 当图片还未加载成功时，默认填充的背景图
 })
 
 Vue.config.productionTip = false
