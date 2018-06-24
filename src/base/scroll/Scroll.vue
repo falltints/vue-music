@@ -19,7 +19,7 @@ export default {
     },
     data: {
       type: Array,
-      default: null
+      default: []
     }
   },
   methods: {
