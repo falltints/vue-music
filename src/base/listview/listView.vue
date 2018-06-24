@@ -1,7 +1,7 @@
 <template>
-  <scroll class="listview" :data="data">
+  <scroll class="listview" :data="data" ref="listview">
     <ul>
-      <li v-for="group of data" class="list-group" :key="group.title">
+      <li v-for="group of data" class="list-group" :key="group.title" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
           <li v-for="item of group.items" class="list-group-item" :key="item.id">
@@ -11,7 +11,11 @@
         </ul>
       </li>
     </ul>
-    <div class="list-shortcut" @touch="onShortcutTouchStart">
+    <div
+      class="list-shortcut"
+      @touchstart="onShortcutTouchStart"
+      @touchmove.stop.prevent="onShortcutTouchMove"
+    >
       <ul>
         <li
           v-for="(item, index) of shortcutList"
@@ -26,6 +30,10 @@
 
 <script>
 import Scroll from 'base/scroll/Scroll'
+import {getData} from 'common/js/dom'
+
+const ANCHOR_HEIGHT = 18
+
 export default {
   name: 'ListView',
   components: {
@@ -47,8 +55,25 @@ export default {
   },
   methods: {
     onShortcutTouchStart (e) {
-
+      let anchorIndex = parseInt(getData(e.target, 'index')) // 获取到当前index值
+      let currentTouch = e.touches[0]
+      this.touch.originalY = currentTouch.pageY
+      this.touch.originalIndex = anchorIndex
+      this._scrollTo(anchorIndex)
+    },
+    onShortcutTouchMove (e) {
+      let currentTouch = e.touches[0]
+      let currentY = currentTouch.pageY
+      let delta = Math.floor((currentY - this.touch.originalY) / ANCHOR_HEIGHT)
+      let anchorIndex = this.touch.originalIndex + delta
+      this._scrollTo(anchorIndex)
+    },
+    _scrollTo (index) {
+      this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0) // {Number} time 滚动动画执行的时长（单位 ms）
     }
+  },
+  created () {
+    this.touch = {}
   }
 }
 </script>
