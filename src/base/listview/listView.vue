@@ -11,7 +11,12 @@
       <li v-for="group of data" class="list-group" :key="group.title" ref="listGroup">
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
-          <li v-for="item of group.items" class="list-group-item" :key="item.id">
+          <li
+            v-for="item of group.items"
+            class="list-group-item"
+            :key="item.id"
+            @click="selectItem(item)"
+          >
             <img class="avatar" v-lazy="item.avatar">
             <span class="name">{{ item.name }}</span>
           </li>
@@ -91,6 +96,9 @@ export default {
       let delta = Math.floor((currentY - this.touch.originalY) / ANCHOR_HEIGHT)
       let anchorIndex = this.touch.originalIndex + delta
       this._scrollTo(anchorIndex)
+    },
+    selectItem (item) {
+      this.$emit('select', item)
     },
     scroll (pos) {
       this.scrollY = pos.y // scrollY为负值
