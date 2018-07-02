@@ -12,11 +12,11 @@ module.exports = {
     assetsPublicPath: '/',
     // 代理表，用来建一个虚拟api服务器用来代理本机的请求，只能用于开发模式
     proxyTable: {
-      /*'/getDiscList': {
-        target: 'https://c.y.qq.com',
-        pathRewrite: {
-          '^/getDiscList': '/splcloud/fcgi-bin/'
-        },
+      /*'/getSongUrl': {
+        target: 'https://c.y.qq.com/base/fcgi-bin/fcg_music_express_mobile3.fcg',
+        /!*pathRewrite: {
+          '^/api': '/'
+        },*!/
         changeOrigin: true // -> 指示是否跨域
       }*/
     },

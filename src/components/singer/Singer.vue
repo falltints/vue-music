@@ -30,10 +30,11 @@ export default {
       setSinger: 'SET_SINGER'
     }),
     selectSinger (singer) {
+      this.setSinger(singer) // 存入state
+
       this.$router.push({
         path: `/singer/${singer.id}`
       })
-      this.setSinger(singer)
     },
     _getSingerList () {
       getSingerList().then((res) => {
