@@ -17,6 +17,7 @@
 <script>
 import BScroll from 'better-scroll'
 import {addClass} from 'common/js/dom'
+
 export default {
   name: 'Slider',
   props: {
@@ -38,12 +39,12 @@ export default {
       dots: [],
       currentIndex: 0,
       slider: null,
-      updateNumber: false
+      hasUpdated: false
     }
   },
   methods: {
     _setSliderWidth (isResize) {
-      // this.children.length的值是变化的，slider初始化之前为5，之后为5
+      // this.children.length的值是变化的，slider初始化之前为5，之后为7
       this.children = this.$refs.sliderGroup.children
 
       let width = 0
@@ -69,18 +70,20 @@ export default {
     _initSlider () {
       this.slider = new BScroll(this.$refs.slider, {
         scrollX: true,
-        scrollY: false,
+        scrollY: false, // 允许左右滑动，不允许上下滑动
         momentum: false,
-        snap: {
-          loop: this.loop,
+        snap: { // 这个配置是为了做Slider组件用的，默认为 false，如果开启则需要配置一个 Object
+          loop: this.loop, // 如果设置为true，则better-scroll自动为slider组件的左右复制两个元素
           threshold: 0.3,
           speed: 400
         }
       })
 
+      // 与dots联动
       this.slider.on('scrollEnd', () => {
         // 无论手动滑动还是自动滑动都会触发这个事件
         this.currentIndex = this.slider.getCurrentPage().pageX
+        // x 和 y 表示偏移的坐标值，pageX 和 pageY 表示横轴方向和纵轴方向的页面数。
         if (this.autoPlay) {
           clearTimeout(this.timer)
           this._play()
@@ -94,7 +97,8 @@ export default {
     }
   },
   updated () {
-    if (!this.updateNumber) {
+    // 数据有变动，重新渲染DOM
+    if (!this.hasUpdated) {
       this._setSliderWidth(false)
       this._initDots()
       this._initSlider()
@@ -112,7 +116,7 @@ export default {
         this.slider.refresh()
       })
 
-      this.updateNumber = true
+      this.hasUpdated = true
     }
   },
   destroyed () { // 切换路由的时候
@@ -141,9 +145,9 @@ export default {
         width: 100%
         overflow: hidden
         text-decoration: none
-      img
-        display: block
-        width: 100%
+        img
+          display: block
+          width: 100%
   .dots
     position: absolute
     right: 0

@@ -1,6 +1,6 @@
 <template>
   <div class="recommend" ref="recommend">
-    <scroll ref="scroll" class="recommend-content" :data="discList">
+    <scroll class="recommend-content" :data="discList" ref="scroll">
       <div>
         <div class="slider-wrapper" ref="sliderWrapper">
           <slider>
@@ -83,8 +83,8 @@ export default {
     this._getRecommendation()
     this._getDiscList()
     // 生命周期：
-    // recommend created => slider mounted => recommend mounted => 获取recommends数据，重新渲染虚拟DOM
-    // => slider updated => recommend updated
+    // recommend created => slider mounted => scroll mounted => recommend mounted =>
+    // 获取recommends数据，重新渲染虚拟DOM => slider updated => recommend updated
   }
 }
 </script>
@@ -104,7 +104,7 @@ export default {
       position: relative
       width: 100%
       height: 0
-      padding-bottom: 40%
+      padding-bottom: 40% // 占父级元素宽度的百分比
       background-color: #ccc
       overflow: hidden
     .recommend-list

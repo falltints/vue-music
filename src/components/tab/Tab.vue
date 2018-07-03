@@ -34,7 +34,7 @@ export default {
     .tab-link
       padding-bottom: 5px
       color: $color-text-l
-    &.router-link-active // router-link默认自带的属性
+    &.router-link-active // router-link标签 选中的时候,会自动给整个标签添加一个router-link-active的class
       .tab-link
         color: $color-theme
         border-bottom: 2px solid $color-theme

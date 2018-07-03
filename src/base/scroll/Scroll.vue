@@ -6,6 +6,7 @@
 
 <script>
 import BScroll from 'better-scroll'
+
 export default {
   name: 'Scroll',
   props: {
@@ -39,7 +40,7 @@ export default {
       if (this.listenScroll) {
         let me = this
         this.scroll.on('scroll', (pos) => {
-          // this指的是this.scroll
+          // 这里this指的是this.scroll
           me.$emit('scroll', pos)
         })
       }
@@ -53,10 +54,10 @@ export default {
     refresh () {
       this.scroll && this.scroll.refresh()
     },
-    scrollTo () {
+    scrollTo () { // (x, y, time, easing)
       this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
     },
-    scrollToElement () {
+    scrollToElement () { // (el, time, offsetX|Boolean, offsetY|Boolean, easing)
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
     }
   },
