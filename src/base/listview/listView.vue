@@ -2,18 +2,23 @@
   <scroll
     class="listview"
     :data="data"
-    ref="listview"
     :listenScroll="listenScroll"
     :probeType="probeType"
     @scroll="scroll"
+    ref="listview"
   >
     <ul>
-      <li v-for="group of data" class="list-group" :key="group.title" ref="listGroup">
+      <li
+        class="list-group"
+        v-for="group of data"
+        :key="group.title"
+        ref="listGroup"
+      >
         <h2 class="list-group-title">{{ group.title }}</h2>
         <ul>
           <li
-            v-for="item of group.items"
             class="list-group-item"
+            v-for="item of group.items"
             :key="item.id"
             @click="selectItem(item)"
           >
@@ -27,11 +32,12 @@
       <ul @touchstart="onShortcutTouchStart"
           @touchmove.stop.prevent="onShortcutTouchMove"
       >
+      <!--stop阻止事件冒泡，prevent阻止元素的默认行为-->
         <li
-          v-for="(item, index) of shortcutList"
-          :key="item"
           class="item"
           :class="{current: currentIndex === index}"
+          v-for="(item, index) of shortcutList"
+          :key="item"
           :data-index="index"
         >{{ item }}</li>
       </ul>
@@ -39,20 +45,25 @@
     <div class="list-fixed" v-show="fixedTitle" ref="fixed">
       <h1 class="fixed-title">{{ fixedTitle }}</h1>
     </div>
+    <div class="loading-container" v-show="!data.length">
+      <loading></loading>
+    </div>
   </scroll>
 </template>
 
 <script>
 import Scroll from 'base/scroll/Scroll'
+import Loading from 'base/loading/Loading'
 import {getData} from 'common/js/dom'
 
-const ANCHOR_HEIGHT = 18
+const ANCHOR_HEIGHT = 18 // 每一个字母索引的高度
 const TITLE_HEIGHT = 30
 
 export default {
   name: 'ListView',
   components: {
-    Scroll
+    Scroll,
+    Loading
   },
   props: {
     data: {
@@ -68,6 +79,7 @@ export default {
     }
   },
   computed: {
+    // 由data取到alphabet
     shortcutList () {
       // map方法返回一个新数组
       return this.data.map((group) => {
@@ -83,9 +95,12 @@ export default {
   },
   methods: {
     onShortcutTouchStart (e) {
+      // 移动端touch事件与click事件的关系：
+      // 手指点击一个元素，会经过：touchstart --> touchmove -> touchend --》click。
       let anchorIndex = parseInt(getData(e.target, 'index')) // 获取到当前index值
       this.currentIndex = anchorIndex
       let currentTouch = e.touches[0]
+      // pageX和pageY属性是相对于整个document而言的
       this.touch.originalY = currentTouch.pageY
       this.touch.originalIndex = anchorIndex
       this._scrollTo(anchorIndex)
@@ -95,6 +110,7 @@ export default {
       let currentY = currentTouch.pageY
       let delta = Math.floor((currentY - this.touch.originalY) / ANCHOR_HEIGHT)
       let anchorIndex = this.touch.originalIndex + delta
+      this.currentIndex = anchorIndex
       this._scrollTo(anchorIndex)
     },
     selectItem (item) {
@@ -106,7 +122,7 @@ export default {
     _scrollTo (index) {
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0) // {Number} time 滚动动画执行的时长（单位 ms）
     },
-    _calculateHeight () {
+    _calculateHeight () { // 得到一个数组，数组里面是每个listGroup距离顶部的距离
       this.listHeight = []
       let listGroups = this.$refs.listGroup
       let height = 0
@@ -223,9 +239,9 @@ export default {
         font-size: $font-size-small
         color: $color-text-l
         background: $color-highlight-background
-  /*.loading-container
+  .loading-container
     position: absolute
     width: 100%
     top: 50%
-    transform: translateY(-50%)*/
+    transform: translateY(-50%)
 </style>

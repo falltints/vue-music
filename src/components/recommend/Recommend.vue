@@ -6,7 +6,7 @@
           <slider>
             <div v-for="item of recommends" :key="item.id">
               <a :href="item.linkUrl">
-                <img class="needsclick" :src="item.picUrl" @load="loadImage">
+                <img class="needsclick" :src="item.picUrl"><!--@load="loadImage"-->
                 <!--添加needsclick类是为了消除fastClick的默认阻止点击行为-->
               </a>
             </div>
@@ -52,8 +52,8 @@ export default {
   data () {
     return {
       recommends: [],
-      discList: [],
-      checkLoaded: false
+      discList: []
+      /*checkLoaded: false*/
     }
   },
   methods: {
@@ -71,13 +71,13 @@ export default {
           this.discList = res.data.list
         }
       })
-    },
-    loadImage () {
+    }
+    /*loadImage () {
       if (!this.checkLoaded) {
         this.$refs.scroll.refresh()
         this.checkLoaded = true
       }
-    }
+    }*/
   },
   created () {
     this._getRecommendation()
@@ -126,10 +126,10 @@ export default {
           // width: 60px
           padding-right: 20px
         .text
+          flex: 1
           display: flex
           flex-direction: column
           justify-content: center
-          flex: 1
           line-height: 20px
           overflow: hidden
           font-size: $font-size-medium
