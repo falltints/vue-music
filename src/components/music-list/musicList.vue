@@ -5,8 +5,8 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
-      <div class="play-wrapper">
-        <div class="play" v-show="songs.length" ref="playBtn">
+      <div class="play-wrapper"><!--随机播放按钮-->
+        <div class="play" v-show="songs.length" @click="random" ref="playBtn">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
         </div>
@@ -15,11 +15,11 @@
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll
+      class="list"
       :data="songs"
       :probe-type="probeType"
       :listen-scroll="listenScroll"
       @scroll="scroll"
-      class="list"
       ref="list">
       <div class="song-list-wrapper">
         <song-list :songs="songs" @select="selectItem"></song-list>
@@ -36,7 +36,9 @@ import Scroll from 'base/scroll/Scroll'
 import SongList from 'base/song-list/songList'
 import Loading from 'base/loading/Loading'
 import {prefixStyle} from 'common/js/dom'
-import {mapActions} from 'vuex'
+import {mapActions, mapGetters} from 'vuex'
+import {playMode} from 'common/js/config'
+import {playlistMixin} from 'common/js/mixin'
 
 const RESERVED_HEIGHT = 40
 const transform = prefixStyle('transform')
@@ -44,6 +46,7 @@ const backdrop = prefixStyle('backdrop-filter')
 
 export default {
   name: 'MusicList',
+  mixins: [playlistMixin],
   components: {
     SongList,
     Scroll,
@@ -71,7 +74,11 @@ export default {
   computed: {
     bgStyle () {
       return `background-image: url(${this.bgImage})`
-    }
+    },
+    ...mapGetters([
+      'mode',
+      'playlist'
+    ])
   },
   methods: {
     scroll (pos) {
@@ -83,41 +90,56 @@ export default {
     selectItem (song, index) {
       this.selectPlay({
         list: this.songs,
-        index
+        index: index
       })
     },
+    random () {
+      this.randomPlay({
+        list: this.songs
+      })
+    },
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     ...mapActions([
-      'selectPlay'
+      'selectPlay',
+      'randomPlay'
     ])
   },
   watch: {
     scrollY (newY) {
+      // 随着scroll滚动而移动layer层
       let translateY = Math.max(this.minTranslateY, newY)
-      let zIndex = 0
-      let scale = 1
-      let blur = 0
       this.$refs.layer.style[transform] = `translate3d(0, ${translateY}px, 0)`
+
+      let bgImgZIndex = 0
+      let bgImgScale = 1
+      let blur = 0
       let percent = Math.abs(newY / this.imageHeight)
+
       if (newY > 0) {
-        scale = 1 + percent
-        zIndex = 10
+        bgImgScale = 1 + percent
+        bgImgZIndex = 10
       } else {
         blur = Math.min(20 * percent, 20)
       }
-      // this.$refs.filter.style['filter'] = `blur(${blur}px)`
-      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+
       if (newY < this.minTranslateY) {
-        zIndex = 10
+        bgImgZIndex = 10
         this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
-        this.$refs.bgImage.style.paddingTop = 0
+        this.$refs.bgImage.style.paddingBottom = 0
         this.$refs.playBtn.style.display = 'none'
       } else {
         this.$refs.bgImage.style.height = 0
-        this.$refs.bgImage.style.paddingTop = '70%'
+        this.$refs.bgImage.style.paddingBottom = '70%'
         this.$refs.playBtn.style.display = ''
       }
-      this.$refs.bgImage.style.zIndex = zIndex
-      this.$refs.bgImage.style[transform] = `scale(${scale})`
+      // this.$refs.filter.style['filter'] = `blur(${blur}px)`
+      this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+      this.$refs.bgImage.style.zIndex = bgImgZIndex
+      this.$refs.bgImage.style[transform] = `scale(${bgImgScale})`
     }
   },
   created () {
@@ -126,7 +148,7 @@ export default {
   },
   mounted () {
     this.imageHeight = this.$refs.bgImage.clientHeight
-    this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT
+    this.minTranslateY = -this.imageHeight + RESERVED_HEIGHT // 因为是向上移动，所以设置为负值
     this.$refs.list.$el.style.top = `${this.imageHeight}px`
   }
 }
@@ -169,7 +191,7 @@ export default {
     position: relative
     width: 100%
     height: 0
-    padding-top: 70%
+    padding-bottom: 70%
     transform-origin: top
     background-size: cover
     .play-wrapper

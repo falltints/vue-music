@@ -41,9 +41,11 @@ import {ERR_OK} from 'api/config'
 import Slider from 'base/slider/Slider'
 import Scroll from 'base/scroll/Scroll'
 import Loading from 'base/loading/Loading'
+import {playlistMixin} from 'common/js/mixin'
 
 export default {
   name: 'Recommend',
+  mixins: [playlistMixin],
   components: {
     Slider,
     Scroll,
@@ -57,6 +59,11 @@ export default {
     }
   },
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
+    },
     _getRecommendation () {
       // 异步过程，会有一定时间的延迟
       getRecommendation().then((res) => {

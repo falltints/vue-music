@@ -119,6 +119,9 @@ export default {
     scroll (pos) {
       this.scrollY = pos.y // scrollY为负值
     },
+    refresh () {
+      this.$refs.listview.refresh()
+    },
     _scrollTo (index) {
       this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0) // {Number} time 滚动动画执行的时长（单位 ms）
     },

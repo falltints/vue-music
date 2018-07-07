@@ -50,12 +50,38 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         axios.get(url, {
           // 模拟请求头
           headers: {
-            referer: 'https://y.qq.com/'
+            referer: 'https://y.qq.com/',
+            host: 'c.y.qq.com'
           },
           params: req.query
         }).then((response) => {
           // 使用axios发送的请求，其响应内容都在response.data中
           res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+      app.get('/getLyric', function (req, res) {
+        const url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+        axios.get(url, {
+          // 模拟请求头
+          headers: {
+            referer: 'https://y.qq.com/',
+            host: 'c.y.qq.com'
+            // userAgent: 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
+          },
+          params: req.query
+        }).then((response) => {
+          let ret = response.data
+          // 使用axios发送的请求，其响应内容都在response.data中
+          if (typeof ret === 'string') {
+            const reg = /^\w+\(({[^()]+})\)$/
+            const matches = ret.match(reg)
+            if (matches) {
+              ret = JSON.parse(matches[1])
+            }
+          }
+          res.json(ret)
         }).catch((e) => {
           console.log(e)
         })

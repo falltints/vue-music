@@ -1,7 +1,7 @@
 import {playMode} from 'common/js/config'
 
 const state = {
-  singer: {},
+  singer: {}, // {id: '', name: '', avatar: ''}
   playing: false,
   fullScreen: false,
   playlist: [],
